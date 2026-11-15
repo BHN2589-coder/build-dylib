@@ -1,0 +1,23 @@
+name: Build iOS Dylib
+
+on:
+  push:
+    branches: [ main, master ]
+
+jobs:
+  build:
+    runs-on: macos-latest
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v3
+
+    - name: Compile Dylib with Clang
+      run: |
+        xcrun -sdk iphoneos clang -arch arm64 -dynamiclib AudioHookBridge.m -framework Foundation -framework AudioToolbox -framework UIKit -o libAudioHookBridge.dylib
+
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: libAudioHookBridge
+        path: libAudioHookBridge.dylib
