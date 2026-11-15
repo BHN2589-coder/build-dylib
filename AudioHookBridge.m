@@ -82,7 +82,8 @@ static void forceShowDzbUIForGames(void) {
     [defaults setBool:YES forKey:@"Dzb_VirtualCamEnabled"];
     [defaults synchronize];
 
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(4.0 * NSEC_PER_SEC)), dispatch_get_main_q(), ^{
+    // ĐÃ SỬA LỖI Ở ĐÂY: dispatch_get_main_q() -> dispatch_get_main_queue()
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(4.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         NSArray *classNames = @[@"DzbOverlayVC", @"DzbCallPanel", @"Dzb"];
         for (NSString *className in classNames) {
             Class targetClass = NSClassFromString(className);
@@ -140,4 +141,3 @@ static void init_AudioHookBridge(void) {
     
     forceShowDzbUIForGames();
 }
-
