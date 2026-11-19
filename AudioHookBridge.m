@@ -134,7 +134,16 @@ static UIInterfaceOrientationMask fixed_supportedInterfaceOrientations(id self, 
     }
     for (UIScene *scene in [UIApplication sharedApplication].connectedScenes) {
         if ([scene isKindOfClass:[UIWindowScene class]]) {
-            UIInterfaceOrientation orientation = ((UIWindowScene *)scene).interfaceOrientation;
+            UIWindowScene *winScene = (UIWindowScene *)scene;
+            UIInterfaceOrientation orientation = UIInterfaceOrientationUnknown;
+            if (@available(iOS 26.0, *)) {
+                orientation = winScene.effectiveGeometry.interfaceOrientation;
+            } else {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+                orientation = winScene.interfaceOrientation;
+#pragma clang diagnostic pop
+            }
             if (UIInterfaceOrientationIsLandscape(orientation)) {
                 return UIInterfaceOrientationMaskLandscape;
             }
@@ -195,7 +204,7 @@ static void ensureVoiceChangerState(void) {
     NSError *err = nil;
     if (![session.category isEqualToString:AVAudioSessionCategoryPlayAndRecord]) {
         [session setCategory:AVAudioSessionCategoryPlayAndRecord
-                 withOptions:AVAudioSessionCategoryOptionDefaultToSpeaker | AVAudioSessionCategoryOptionAllowBluetooth
+                 withOptions:AVAudioSessionCategoryOptionDefaultToSpeaker | AVAudioSessionCategoryOptionAllowBluetoothHFP
                        error:&err];
     }
     [session setActive:YES error:&err];
